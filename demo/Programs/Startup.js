@@ -41,8 +41,8 @@ if (rpgcode.getGlobal("started")) {
    rpgcode.loadAssets(assets, function() {
       console.log("loadAssets");
       setup();
-   //   fadeIn();
-      start();
+      fadeIn();
+//      start();
    });
    
    function setup() {
@@ -61,6 +61,9 @@ if (rpgcode.getGlobal("started")) {
    
    function start() {
       console.log("start");
+      rpgcode.destroyCanvas(poweredByCanvas);
+      rpgcode.clearCanvas();
+      rpgcode.setGlobalAlpha(1.0);
       rpgcode.endProgram("Title.js");
    }
    

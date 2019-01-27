@@ -1,11 +1,16 @@
-rpgcode.setGlobal("interacting", true);
-
 const characterId = "guy.character";
-const direction = rpgcode.getCharacterDirection();
-if (direction === "WEST" || direction === "NORTH") {
-   rpgcode.animateCharacter(characterId, "INTERACT_WEST", finish);
+if (rpgcode.getSprite("item_5")) {
+   rpgcode.setGlobal("interacting", true);
+   
+   const direction = rpgcode.getCharacterDirection();
+   if (direction === "WEST" || direction === "NORTH") {
+      rpgcode.animateCharacter(characterId, "INTERACT_WEST", finish);
+   } else {
+      rpgcode.animateCharacter(characterId, "INTERACT_EAST", finish);
+   }
 } else {
-   rpgcode.animateCharacter(characterId, "INTERACT_EAST", finish);
+   rpgcode.resetActivationChecks(characterId);
+   rpgcode.endProgram();
 }
 
 function finish() {

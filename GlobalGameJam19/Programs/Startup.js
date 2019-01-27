@@ -15,8 +15,7 @@ if (rpgcode.getGlobal("started")) {
          "ui/counter_3.png",
          "ui/counter_4.png",
          "ui/counter_5.png",
-         "ui/counter_6.png",
-         "ui/counter_7.png"
+         "ui/counter_6.png"
      ]
    }
    

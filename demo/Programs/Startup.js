@@ -8,7 +8,8 @@ if (rpgcode.getGlobal("started")) {
    
    var assets = {
      "images": [
-         "ui/powered_by.png"
+         "ui/powered_by.png",
+         "speech.png"
      ]
    }
    

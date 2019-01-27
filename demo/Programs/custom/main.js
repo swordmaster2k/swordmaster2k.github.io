@@ -18,7 +18,7 @@ if (rpgcode.getGlobal("run")) {
    function jumpOut() {
       rpgcode.animateCharacter("", "JUMP_WEST", function() {
          rpgcode.setCharacterStance(spriteId, "EAST");
-         rpgcode.delay(1000, function() {
+         rpgcode.delay(500, function() {
             situp();
          }, false);
       }); 
@@ -26,8 +26,10 @@ if (rpgcode.getGlobal("run")) {
    
    function situp() {
       rpgcode.animateSprite(spriteId, "SIT_UP", function() {
+         rpgwizard.craftyBoard.board.layers[1].images.push({src: "speech.png", x: 503, y: 267, id: "0349182b-7b6e-43ef-ac8a-ea514a7d8a6e"});
          rpgcode.animateSprite(spriteId, "IDLE", function() {
             rpgcode.animateSprite(spriteId, "IDLE", function() {
+               rpgwizard.craftyBoard.board.layers[1].images.pop();
                const loc = rpgcode.getSpriteLocation("p0", false, false);
                rpgcode.setSpriteLocation(spriteId, loc.x, loc.y, 1, false);
                rpgwizard.craftyBoard.board.sprites.owner.sprite.layer = 1 // HACK for bug

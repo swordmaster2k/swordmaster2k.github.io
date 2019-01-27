@@ -1,4 +1,4 @@
-if (rpgcode.getGlobal("items") >= 4) {
+if (rpgcode.getGlobal("items") >= 5) {
    rpgcode.setGlobal("gameOver", true);
    rpgcode.setGlobal("jumping", true);
 
@@ -12,8 +12,7 @@ if (rpgcode.getGlobal("items") >= 4) {
    
    function finish() {
       rpgcode.setGlobal("jumping", false);
-      rpgcode.resetActivationChecks(characterId);
-      rpgcode.endProgram();
+      rpgcode.endProgram("Won.js");
    }
 } else {
    rpgcode.resetActivationChecks(characterId);

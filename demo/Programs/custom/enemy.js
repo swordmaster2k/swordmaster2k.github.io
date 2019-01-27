@@ -4,7 +4,7 @@ const global = "owner.moving";
 const moveDelay = 700;
 const thinkTime = 2000;
 
-const fastChance = 0.50;
+const fastChance = 0.90;
 const moveChance = 0.75;
 const thinkChance = 0.75;
 
@@ -13,7 +13,7 @@ const fastModifier = 0.80;
 if (rpgcode.getGlobal(global)) {
    rpgcode.setGlobal(global, false);
    rpgcode.setSpriteStance(spriteId, "WEST");
-   moveToPoint(1);  
+   moveToPoint(1);
 }
 
 function doIdle(start, i) {
@@ -31,7 +31,7 @@ function moveToPoint(i) {
    if (rpgcode.getGlobal("gameOver")) {
       return;
    }
-   
+
    var p = "p";
    var goToPn = false;
    if (i > 7) {
@@ -58,10 +58,10 @@ function moveToPoint(i) {
    }
 
    var modifier = 1;
-   if (Math.random() >= moveChance) {
+   if (Math.random() >= (fastChance / (rpgcode.getGlobal("items") + 1))) {
       modifier = fastModifier / (rpgcode.getGlobal("items") + 1);
    }
-   
+
    const loc = rpgcode.getSpriteLocation(p, false, false);
    rpgcode.moveSpriteTo(spriteId, loc.x, loc.y, moveDelay * modifier, function() {
       if (Math.random() >= thinkChance) {
@@ -70,5 +70,5 @@ function moveToPoint(i) {
          moveToPoint(++i);
       }
    });
-   
+
 }

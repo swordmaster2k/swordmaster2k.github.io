@@ -9,7 +9,14 @@ if (rpgcode.getGlobal("started")) {
    var assets = {
      "images": [
          "ui/powered_by.png",
-         "speech.png"
+         "speech.png",
+         "ui/counter_1.png",
+         "ui/counter_2.png",
+         "ui/counter_3.png",
+         "ui/counter_4.png",
+         "ui/counter_5.png",
+         "ui/counter_6.png",
+         "ui/counter_7.png"
      ]
    }
    

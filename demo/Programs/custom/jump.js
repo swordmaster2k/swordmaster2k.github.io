@@ -15,7 +15,6 @@ if (rpgcode.getGlobal("items") >= 5) {
       rpgcode.endProgram("Won.js");
    }
 } else {
-   rpgcode.resetActivationChecks(characterId);
    rpgcode.endProgram();
 }
 

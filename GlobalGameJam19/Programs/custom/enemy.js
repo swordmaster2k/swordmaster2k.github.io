@@ -1,14 +1,14 @@
 const spriteId = "owner";
 const global = "owner.moving";
 
-const moveDelay = 700;
+const moveDelay = 1500;
 const thinkTime = 2000;
 
-const fastChance = 0.95;
+const fastChance = 1.5;
 const moveChance = 0.75;
 const thinkChance = 0.75;
 
-const fastModifier = 0.95;
+const fastModifier = 1.5;
 
 if (rpgcode.getGlobal(global)) {
    rpgcode.setGlobal(global, false);

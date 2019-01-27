@@ -4,11 +4,11 @@ const global = "owner.moving";
 const moveDelay = 700;
 const thinkTime = 2000;
 
-const fastChance = 0.90;
+const fastChance = 0.95;
 const moveChance = 0.75;
 const thinkChance = 0.75;
 
-const fastModifier = 0.80;
+const fastModifier = 0.95;
 
 if (rpgcode.getGlobal(global)) {
    rpgcode.setGlobal(global, false);

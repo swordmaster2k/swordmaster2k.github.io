@@ -1,1 +1,1 @@
-{"frameRate":3,"soundEffect":"","width":64,"spriteSheet":{"image":"character/walk_west.png","x":0,"width":64,"y":0,"height":32},"version":1.4,"height":64}
+{"frameRate":5,"soundEffect":"","width":64,"spriteSheet":{"image":"character/walk_west.png","x":0,"width":64,"y":0,"height":32},"version":1.4,"height":64}

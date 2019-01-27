@@ -1,7 +1,7 @@
 const spriteId = "owner";
 const global = "owner.moving";
 
-const moveDelay = 1500;
+const moveDelay = 1200;
 const thinkTime = 2000;
 
 const fastChance = 1.5;

@@ -19,6 +19,7 @@ if (rpgcode.getGlobal("run")) {
       rpgcode.animateCharacter("", "JUMP_WEST", function() {
          rpgcode.setCharacterStance(spriteId, "EAST");
          rpgcode.delay(500, function() {
+            rpgcode.endProgram();
             situp();
          }, false);
       }); 
@@ -34,7 +35,6 @@ if (rpgcode.getGlobal("run")) {
                rpgcode.setSpriteLocation(spriteId, loc.x, loc.y, 1, false);
                rpgwizard.craftyBoard.board.sprites.owner.sprite.layer = 1 // HACK for bug
                rpgcode.setGlobal(global, true);
-               rpgcode.endProgram();
             });
          });
       });

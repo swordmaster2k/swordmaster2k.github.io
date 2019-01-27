@@ -15,7 +15,9 @@ rpgcode.loadAssets(assets, function() {
   rpgcode.setImage("ui/game_over.png", 0, 0, 800 * scale, 600 * scale, gameOverCanvas);
   rpgcode.renderNow(gameOverCanvas);
 
-  rpgcode.delay(5000, function() {
-    rpgcode.restart();
-  });
+  rpgcode.registerKeyDown("SPACE", rpgcode.restart, false);
+
+//  rpgcode.delay(5000, function() {
+//    rpgcode.restart();
+//  });
 }); 

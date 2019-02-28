@@ -1,4 +1,5 @@
 const characterId = "guy.character";
+
 if (rpgcode.getSprite("item_1")) {
    rpgcode.setGlobal("interacting", true);
 

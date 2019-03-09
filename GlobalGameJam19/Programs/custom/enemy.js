@@ -30,6 +30,9 @@ function doIdle(start, i) {
    });
 }
 
+/*
+ * Selects the next point to move to based on enemy's current location.
+ */
 function selectNextPoint(i) {
    var p = "p";
    var goToPn = false;

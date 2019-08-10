@@ -125,7 +125,7 @@ RPGcode.prototype._convertCraftyId = function (craftyId) {
 
 RPGcode.prototype._getSpriteType = function (spriteId) {
     var entity = rpgwizard.craftyBoard.board.sprites[spriteId];
-    if (entity) {
+    if (entity && entity.sprite) {
         if (entity.sprite.enemy) {
             return entity.sprite.enemy;
         } else if (entity.sprite.npc) {
@@ -135,6 +135,32 @@ RPGcode.prototype._getSpriteType = function (spriteId) {
         }
     }
     return null;
+};
+
+/**
+ * Adds the layer image to the requested layer, it will be rendered immediately
+ * after being added to the board.
+ * 
+ * Note: Layers added this way will be lost the moment the board is reloaded.
+ * 
+ * @example
+ * var image = {
+ *  "src": "battle-background.png", // pre-loaded asset image
+ *  "x": 50,                        // x location on board in pixels
+ *  "y": 100,                       // y location on board in pixels
+ *  "id": "battle.background"       // unique for this layer image
+ * }
+ * 
+ * rpgcode.addLayerImage(image, 1); // Adds the image to layer 1 on the current board
+ * 
+ * @param {Object} image The layer image to add to the board.
+ * @param {Number} layer Layer index on the board, first layer starts at 0.
+ * @returns {undefined}
+ */
+RPGcode.prototype.addLayerImage = function (image, layer) {
+    if (layer < rpgwizard.craftyBoard.board.layers.length) {
+        rpgwizard.craftyBoard.board.layers[layer].images.push(image);
+    }
 };
 
 /**
@@ -865,10 +891,13 @@ RPGcode.prototype.fillRoundedRect = function (x, y, width, height, radius, canva
  * This will return any characters, enemies, NPCs, and SOLID vectors caught in the path of the 
  * raycast enclosing them inside an object.
  * 
+ * If no layer is specified, the origin layer will be the player's current.
+ * 
  * @example
  * var hits = rpgcode.fireRaycast({
  *     _x: location.x,
- *     _y: location.y
+ *     _y: location.y,
+ *     _layer: location.layer // Optional
  *  }, vector, 13);
  *  hits["characters"].forEach(function(character) {
  *      rpgcode.log(character);
@@ -886,7 +915,7 @@ RPGcode.prototype.fillRoundedRect = function (x, y, width, height, radius, canva
  *  });
  *  rpgcode.endProgram();
  * 
- * @param {type} origin The point of origin from which the ray will be cast. The object must contain the properties _x and _y
+ * @param {type} origin The point of origin from which the ray will be cast. The object must contain the properties _x, _y, and optionally _layer.
  * @param {type} direction The direction the ray will be cast. It must be normalized. The object must contain the properties x and y.
  * @param {type} maxDistance The maximum distance up to which intersections will be found. This is an optional parameter defaulting to Infinity. If it's Infinity find all intersections. If it's negative find only first intersection (if there is one). If it's positive find all intersections up to that distance.
  * @returns {Object} An object containing all of the entities in the path of the raycast. 
@@ -900,20 +929,24 @@ RPGcode.prototype.fireRaycast = function (origin, direction, maxDistance) {
     } else {
         hits = Crafty.raycast(origin, direction, -1, "Raycastable");
     }
-    var layerCheck = {obj: {layer: rpgwizard.craftyCharacter.character.layer}};
+    var layerCheck = {
+        obj: {
+            layer: origin._layer === undefined || origin._layer === null ? rpgwizard.craftyCharacter.character.layer : origin._layer
+        }
+    };
     hits.forEach(function (hit) {
         if (hit.obj.sprite) {
             if (hit.obj.sprite.npc) {
-                if (hit.obj.sprite.npc.onSameLayer(layerCheck)) {
+                if (hit.obj.sprite.npc.onSameLayer(layerCheck) && !hit.obj.sprite.npc.baseVectorDisabled) {
                     results.npcs.push(hit.obj.sprite);
                 }
             } else if (hit.obj.sprite.enemy) {
-                if (hit.obj.sprite.enemy.onSameLayer(layerCheck)) {
+                if (hit.obj.sprite.enemy.onSameLayer(layerCheck) && !hit.obj.sprite.enemy.baseVectorDisabled) {
                     results.enemies.push(hit.obj.sprite);
                 }
             }
         } else if (hit.obj.character) {
-            if (hit.obj.character.onSameLayer(layerCheck)) {
+            if (hit.obj.character.onSameLayer(layerCheck) && !hit.obj.character.baseVectorDisabled) {
                 results.characters.push(hit.obj.character);
             }
         } else if (hit.obj.vectorType === "SOLID") {
@@ -2015,6 +2048,31 @@ RPGcode.prototype.replaceTile = function (tileX, tileY, layer, tileSet, tileInde
 };
 
 /**
+ * Removes the layer image with the ID on the specified layer. If the image does
+ * not exist on the layer then there is no effect.
+ * 
+ * @example
+ * rpgcode.removeLayerImage("battle.background", 1); // Remove the image with ID "battle.background" on layer 1 
+ * 
+ * @param {String} id Unique ID of the layer image to remove.
+ * @param {Number} layer Layer index on the board, first layer starts at 0.
+ * @returns {undefined}
+ */
+RPGcode.prototype.removeLayerImage = function (id, layer) {
+    if (layer < rpgwizard.craftyBoard.board.layers.length) {
+        var boardLayer = rpgwizard.craftyBoard.board.layers[layer];
+        var length = boardLayer.images.length;
+        for (var i = 0; i < length; i++) {
+            var image = boardLayer.images[i];
+            if (image.id === id) {
+                boardLayer.images.splice(i, 1); 
+                break;
+            }
+        }
+    }
+};
+
+/**
  * Removes a run time program from the engine, if the program is currently
  * executing it will be allowed to finish first.
  * 
@@ -2152,7 +2210,7 @@ RPGcode.prototype.saveJSON = async function (data, successCallback, failureCallb
  * @param {Number} layer The layer to place the character on.
  */
 RPGcode.prototype.sendToBoard = async function (boardName, tileX, tileY, layer) {
-    if (!layer) {
+    if (layer === undefined || layer === null || layer < 0) {
         // Backwards compatability check.
         layer = rpgwizard.craftyCharacter.character.layer;
     }

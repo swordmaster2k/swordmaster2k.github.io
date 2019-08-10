@@ -18,15 +18,19 @@ function NPC(filename) {
     Sprite.call(this);
 }
 
-NPC.prototype.load = async function () {
+NPC.prototype.load = async function (json) {
     if (rpgwizard.debugEnabled) {
         console.debug("Loading NPC filename=[%s]", this.filename);
     }
 
-    let response = await fetch(this.filename);
-    response = await response.json();
-    for (var property in response) {
-        this[property] = response[property];
+    if (!json) {
+        let response = await fetch(this.filename);
+        json = await response.json();
+        rpgwizard.npcs[this.filename] = JSON.stringify(json);
+    }
+    
+    for (var property in json) {
+        this[property] = json[property];
     }
     this.calculateCollisionPoints();
     this.calculateActivationPoints();
@@ -62,10 +66,10 @@ NPC.prototype.hitOffActivation = function (hitData, entity) {
 
 NPC.prototype.checkCollisions = function (collision, entity) {
     if (rpgwizard.debugEnabled) {
-        console.debug("Checking collisions for NPC name=[%s]", this.name);
+        console.debug("Checking collisions for NPC name=[%s], collision.obj=[%s], entity=[%s]", this.name, collision.obj, entity);
     }
     
-    if (!this.onSameLayer(collision)) {
+    if (!this.onSameLayer(collision) || this.baseVectorDisabled || !this.isOtherCollidable(collision.obj)) {
         entity.resetHitChecks();
         return;
     }

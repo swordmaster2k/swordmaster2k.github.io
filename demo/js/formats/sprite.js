@@ -206,8 +206,14 @@ Sprite.prototype._loadAnimation = async function (fileName) {
     }
 
     if (fileName) {
-        var animation = new Animation(PATH_ANIMATION + fileName);
-        return await animation.load();
+        if (rpgwizard.animations[fileName]) {
+            return rpgwizard.animations[fileName];
+        } else {
+            var animation = new Animation(PATH_ANIMATION + fileName);
+            var result = await animation.load();
+            rpgwizard.animations[fileName] = result;
+            return result;
+        }
     } else {
         return null;
     }
@@ -279,7 +285,7 @@ Sprite.prototype.animate = function (step) {
         if (this.spriteGraphics.elapsed >= delay) {
             this.spriteGraphics.elapsed -= delay;
             var frame = this.spriteGraphics.frameIndex + 1;
-            if (frame < this.spriteGraphics.active.spriteSheet.canvas.width / this.spriteGraphics.active.width) {
+            if (frame < this.spriteGraphics.active.spriteSheet.width / this.spriteGraphics.active.width) {
                 this.spriteGraphics.frameIndex = frame;
             } else {
                 this.spriteGraphics.frameIndex = 0;
@@ -362,8 +368,8 @@ Sprite.prototype.prepareActiveAnimation = function () {
     spriteSheet.ctx.drawImage(image, 0, 0);
     spriteSheet.frames = [];
 
-    var columns = Math.round(image.width / animation.width);
-    var rows = Math.round(image.height / animation.height);
+    var columns = Math.round(spriteSheet.width / animation.width);
+    var rows = Math.round(spriteSheet.height / animation.height);
     var frames = columns * rows;
     for (var index = 0; index < frames; index++) {
         // Converted 1D index to 2D cooridnates.
@@ -371,8 +377,11 @@ Sprite.prototype.prepareActiveAnimation = function () {
         var y = Math.floor(index / columns);
 
         var imageData = spriteSheet.ctx.getImageData(
-                x * animation.width, y * animation.height,
-                animation.width, animation.height);
+                (x * animation.width) + spriteSheet.x, 
+                (y * animation.height) + spriteSheet.y,
+                animation.width, 
+                animation.height
+        );
 
         var frame = document.createElement("canvas");
         frame.width = animation.width;
@@ -407,6 +416,56 @@ Sprite.prototype.onSameLayer = function (collision) {
         return collision.obj.character.layer === this.layer;
     }
     return false;
+};
+
+Sprite.prototype.isEnabled = function() {
+    return !(this.baseVectorDisabled || this.activationVectorDisabled);
+};
+
+Sprite.prototype.isOtherCollidable = function (other) {
+    if (other) {
+        if (other.sprite) {
+            if (other.sprite.character) {
+                return !other.sprite.character.baseVectorDisabled;
+            } else if (other.sprite.enemy) {
+                return !other.sprite.enemy.baseVectorDisabled;
+            } else if (other.sprite.npc) {
+                return !other.sprite.npc.baseVectorDisabled;
+            }
+        } else {
+            if (other.character) {
+                return !other.character.baseVectorDisabled;
+            } else if (other.enemy) {
+                return !other.enemy.baseVectorDisabled;
+            } else if (other.npc) {
+                return !other.npc.baseVectorDisabled;
+            }
+        }
+    }
+    return other !== undefined && other !== null;
+};
+
+Sprite.prototype.isOtherActivatable = function (other) {
+    if (other) {
+        if (other.sprite) {
+            if (other.sprite.character) {
+                return !other.sprite.character.activationVectorDisabled;
+            } else if (other.sprite.enemy) {
+                return !other.sprite.enemy.activationVectorDisabled;
+            } else if (other.sprite.npc) {
+                return !other.sprite.npc.activationVectorDisabled;
+            }
+        } else {
+            if (other.character) {
+                return !other.character.activationVectorDisabled;
+            } else if (other.enemy) {
+                return !other.enemy.activationVectorDisabled;
+            } else if (other.npc) {
+                return !other.npc.activationVectorDisabled;
+            }
+        }
+    }
+    return other !== undefined && other !== null;
 };
 
 Sprite.prototype.checkCollisions = function (collision, entity) {

@@ -1,0 +1,22 @@
+{
+    "files.exclude": {
+        "obj": true,
+        "Debug": true,
+        "DebugColor": true,
+        "Release": true,
+        "ReleaseColor": true,
+        "*.bat": true,
+        "*.log": true,
+        "*.sln": true,
+        "*.vcxproj*": true,
+        "*.db": true,
+        ".gitignore": true,
+        ".vs": true
+    },
+    "files.associations": {
+        "setautobank.h": "c",
+        "spritemanager.h": "c",
+        "keys.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
